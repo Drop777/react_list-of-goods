@@ -6,73 +6,72 @@ import Buttons from '../Buttons/Buttons';
 
 class Goodspage extends React.Component {
   state = {
-    currentRenderIndex: 0,
     currentRenderList: [...this.props.goodsFromServer],
+    value: 0,
   }
 
-  sortGoodsList = index => (
+  sortGoodsList = () => (
     this.setState(prevState => (
       {
-        currentRenderIndex: index,
         currentRenderList: prevState.currentRenderList.sort(
           (a, b) => a.length - b.length
         ),
       })));
 
-  sortAlphGoodsList = index => (
+  sortAlphGoodsList = () => (
     this.setState(prevState => (
       {
-        currentRenderIndex: index,
         currentRenderList: prevState.currentRenderList.sort(),
       }
     )));
 
-  reverseGoodsList = index => (
+  reverseGoodsList = () => (
     this.setState(prevState => (
       {
-        currentRenderIndex: index,
         currentRenderList: prevState.currentRenderList.reverse(),
       }
     )));
 
   selectGoodsItem = (value, list) => (
-    this.setState(
-      {
-        currentRenderList: list.slice(value - 1),
-      }
-    ));
-
-  resetGoodsList = index => (
     this.setState({
-      currentRenderIndex: index,
-      currentRenderList: [...this.props.goodsFromServer],
+      currentRenderList: list.slice(value - 1),
     })
   );
 
+  handleSelectChange = ({ target }) => {
+    this.setState({ value: target.value });
+
+    this.selectGoodsItem(
+      target.value,
+      this.props.goodsFromServer
+    );
+  };
+
+  resetGoodsList = () => {
+    this.setState({
+      currentRenderList: [...this.props.goodsFromServer],
+      value: 0,
+    });
+  };
+
   render() {
-    const { goodsFromServer } = this.props;
-    const { currentRenderIndex, currentRenderList } = this.state;
-    const {
-      sortGoodsList,
-      reverseGoodsList,
-      resetGoodsList,
-      sortAlphGoodsList,
-      selectGoodsItem,
-    } = this;
+    const { currentRenderList, value } = this.state;
 
     return (
       <>
         <Buttons
-          sortGoodsList={sortGoodsList}
-          reverseGoodsList={reverseGoodsList}
-          resetGoodsList={resetGoodsList}
-          sortAlphGoodsList={sortAlphGoodsList}
-          selectGoodsItem={selectGoodsItem}
-          goodsFromServer={goodsFromServer}
+          sortGoodsList={this.sortGoodsList}
+          reverseGoodsList={this.reverseGoodsList}
+          resetGoodsList={this.resetGoodsList}
+          sortAlphGoodsList={this.sortAlphGoodsList}
+          selectGoodsItem={this.selectGoodsItem}
+          goodsFromServer={this.goodsFromServer}
+          handleSelectReset={this.handleSelectReset}
+          handleSelectChange={this.handleSelectChange}
+          value={value}
         />
         <Goodslist
           currentRenderList={currentRenderList}
-          currentRender={currentRenderIndex}
         />
       </>
     );
